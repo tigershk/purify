@@ -1,20 +1,25 @@
 // numbers is an array of numbers. Multiply all
 // numbers contained in array by multiplier
-function multiply(numbers, multiplier){
-  for(var i = 0; i < numbers.length; i++){
-    numbers[i] = numbers[i] * multiplier;
-  }
+function multiply(numbers, multiplier) {
+  let numbersClone = numbers.map(function(number) {
+    return number * multiplier;
+  });
 
-  return numbers;
+  return numbersClone;
 }
+
+exports.multiply = multiply;
 
 // is an array of positive and negative numbers
 // make them all absolute numbers
-function absolute(numbers){
-  for(var i = 0; i < numbers.length; i++){
-    numbers[i] = +numbers[i];
-  }
+function absolute(numbers) {
+  let numbersClone = numbers.map(function(number) {
+    return number < 0 ? (number *= -1) : number;
+  });
+  return numbersClone;
 }
+exports.absolute = absolute;
+
 // names is an array of name of nameObjects
 // {
 //   firstName: 'Alan',
@@ -22,33 +27,47 @@ function absolute(numbers){
 // }
 // concatenate first and last names and return
 // resulting array of names
-function concatNames(names){
-  for(var i = 0; i < names.length; i++){
-    names[i] = `${names[i].firstName} ${names[i].lastName}`;
-  }
-  return names;
+function concatNames(names) {
+  const fullName = names.map(function(name) {
+    return `${name.firstName} ${name.lastName}`;
+  });
+
+  return fullName;
 }
+exports.concatNames = concatNames;
 
 // things is an array of numbers and strings. Convert
 // numbers in array to strings. For example 5 to "5"
-function numbersToStrings(things){
-  for(var i = 0; i < things.length; i++){
-    things[i] = typeof things[i] === 'number' ? things[i]+'' : things[i];
-  }
+function numbersToStrings(things) {
+  const strings = things.map(
+    thing => (typeof thing === "number" ? thing + "" : thing)
+  );
+
+  return strings;
 }
+exports.numbersToStrings = numbersToStrings;
 
 // strings is an array of strings. sort them by length
-function sortByLength(strings){
-  strings.sort(function(a,b){
-    return a.length - b.length;
-  });
+function sortByLength(strings) {
+  const stringClone = [...strings];
+
+  stringClone.sort((a, b) => a.length - b.length);
+
+  // stringClone.sort(function(a, b) {
+  //   return a.length - b.length;
+  // });
+  return stringClone;
 }
+
+exports.sortByLength = sortByLength;
 
 // numbers is an array of numbers. Get last two numbers
 // from numbers
-function lastTwo(numbers){
-  return numbers.splice(-2);
+function lastTwo(numbers) {
+  const numbersClone = [...numbers];
+  return numbersClone.splice(-2);
 }
+exports.lastTwo = lastTwo;
 
 // cars is an array of car objects which look like
 // this
@@ -58,12 +77,18 @@ function lastTwo(numbers){
 //   year: 1992
 // }
 // increment the years by one year for all cars
-function incrementYear(cars){
-  for(var i = 0; i < cars.length; i++){
-    cars[i].year++;
-  }
-  return cars;
+function incrementYear(cars) {
+  const addYear = cars.map(function(car) {
+    const clonecar = { ...car };
+    clonecar.year++;
+    return clonecar;
+  });
+  // for (var i = 0; i < cars.length; i++) {
+  //   cars[i].year++;
+
+  return addYear;
 }
+exports.incrementYear = incrementYear;
 
 // sales is an object where the key is
 // the salespersons name and the value
@@ -74,17 +99,20 @@ function incrementYear(cars){
 //   Mary: [57, 12, 31, 4],
 //   Dave: [43, 2, 12]
 // }
-function totalSales( sales ){
-  Object.keys(sales).forEach(function(key){
-    let total = 0;
+function totalSales(sales) {
+  let returnObject = {};
 
-    for(var i = 0; i < sales[key].length; i++){
-      total = total + sales[key][i];
-    }
-
-    sales[key] = total;
+  Object.keys(sales).forEach(function(key) {
+    let total = sales[key].reduce(function(acc, salesTotal) {
+      acc += salesTotal;
+      return acc;
+    }, 0);
+    returnObject[key] = total;
   });
+  return returnObject;
 }
+exports.totalSales = totalSales;
+
 // stuff is an object with string keys and
 // string values. All keys and values are unique
 // Swap keys and values around, so that keys
@@ -93,15 +121,17 @@ function totalSales( sales ){
 //   a: 'b',
 //   c: 'd'
 // }
-function swapKeysAndValues(stuff){
-  Object.keys(stuff).forEach(function(key){
-    const value = stuff[key];
-    stuff[value] = key;
-    delete stuff[key];
-  });
 
-  return stuff;
+function swapKeysAndValues(stuff) {
+  let returnObject = {};
+  Object.keys(stuff).forEach(function(key) {
+    const value = stuff[key];
+    returnObject[value] = key;
+    delete stuff[key];
+   });
+  return returnObject;
 }
+exports.swapKeysAndValues = swapKeysAndValues;
 
 // dates is an array of dates in string format
 // 'yyyy-mm-dd' convert dates to date object.
@@ -109,18 +139,54 @@ function swapKeysAndValues(stuff){
 
 // Hint: this function has a bug that needs fixing
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date
+
+// function parseDates(dates){
+//   var dateParts = dates.split('-');
+
+//   for(var i = 0; i < dateParts.length; i++){
+//     var year = parseInt(dateParts[0]);
+//     var month = parseInt(dateParts[1]);
+//     var day = parseInt(dateParts[2]);
+//   }
+  
+//   myDate = new Date(year, month, day);
+
+
+// return dates;
+// }
+
 function parseDates(dates){
-  for(var i = 0; i < dates.length; i++){
-    var dateParts = dates[i].split('-');
+  let myDate = new Date(dates);
+  const prettyDate=(myDate.toDateString().substring(4,myDate.length));
+  
+  myDate = prettyDate.split(' ');
+  
+  const month = myDate[0];
+  const day = parseInt(myDate[1]);
+  const year = myDate[2];
+  let suffix='';
 
-    var year = parseInt(dateParts[0]);
-    var month = parseInt(dateParts[1]);
-    var date = parseInt(dateParts[2]);
-
-    dates[i] = new Date(year, month, date);
+  switch(day){
+    case 1 :
+    case 21 :
+    case 31 :
+      suffix='st';
+      break;
+    case 2 :
+    case 22:
+      suffix='nd';
+      break;
+    case 3:
+      suffix='rd';
+      break;
+    default:
+    suffix='th';
+      break;
   }
-  return dates;
+
+  return `${day}${suffix} ${month} ${year}`;
 }
+exports.parseDates=parseDates;
 
 // Stretch goal
 
